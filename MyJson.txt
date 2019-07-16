@@ -1,0 +1,1 @@
+{"firstName":"Ксения","lastName":"Ярыш","firstNameEn":"Ksenia","lastNameEn":"Yarysh","nameInBlog":"Ксения","birthDate":"27.09.1978","city":"Челябинск","country":"Россия","email":"ksana32@gmail.com","phone":"9630830696","fb":"https://www.facebook.com/profile.php?id\u003d100002265303110","vk":"https://vk.com/id76800320"}
