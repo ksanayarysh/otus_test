@@ -1,7 +1,7 @@
 import data.Person;
 import data.TestData;
-import models.MainPageWithAuth;
-import models.MainPageWithoutAuth;
+import models.AuthElem;
+import models.MainPage;
 import models.PersonalAreaPage;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -13,38 +13,48 @@ public class OtusTest extends BaseTest {
     private static final Logger logger = LoggerFactory.getLogger(OtusTest.class);
 
     @Test
-    public void fill_data() throws IOException, InterruptedException {
+    public void fill_data() throws IOException {
         Person me = TestData.readJson();
         logger.info(me.toString());
-        PersonalAreaPage pap = new MainPageWithoutAuth(driver, wait)
+        PersonalAreaPage personalAreaPage = new MainPage(driver)
                 .pressLoginButton()
                 .login(user, password)
-                .gotoPersonalArea();
+                .pressAbout();
         logger.info("logged in");
-        pap.pressAbout().fillPersonalData(me);
-        new MainPageWithAuth(driver, wait).logOut();
-        pap = new MainPageWithoutAuth(driver, wait)
+        personalAreaPage.fillPersonalData(me);
+        new AuthElem(driver).logOut();
+        personalAreaPage = new MainPage(driver)
                 .pressLoginButton()
                 .login(user, password)
-                .gotoPersonalArea();
-        Person me_on_the_site = pap.pressAbout().getPersonFromSite();
+                .pressAbout();
+        Person me_on_the_site = personalAreaPage.getPersonFromSite();
         assert me.equals(me_on_the_site);
       }
 
     @Test
-    public void fill_data1() throws InterruptedException {
-        PersonalAreaPage pap = new MainPageWithoutAuth(driver, wait)
+    public void fill_data1() {
+        PersonalAreaPage personalAreaPage = new MainPage(driver)
                 .pressLoginButton()
                 .login(user, password)
-                .gotoPersonalArea();
-        pap.pressAbout().getPersonFromSite();
-
-
+                .pressAbout();
+        Person me_on_the_site = personalAreaPage.getPersonFromSite();
+        logger.info(me_on_the_site.toString());
     }
 
     @Test
     public void testWithSom(){
         logger.info(user);
         logger.info(password);
+    }
+
+    @Test
+    public void testAuth(){
+        AuthElem auth = new MainPage(driver).getAuthElem();
+        try {
+            auth.logOut();
+            assert false;
+        } catch (NullPointerException np){
+            assert true;
+        }
     }
 }

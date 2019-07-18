@@ -1,7 +1,9 @@
 package models;
 
+import data.Contact;
 import data.Person;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -30,30 +32,31 @@ public class PersonalAreaPage extends BasePage {
     private By cityButtons = By.cssSelector("div.lk-cv-block__select-scroll.lk-cv-block__select-scroll_city.js-custom-select-options button");
     private By contactButtons = By.cssSelector("div.lk-cv-block__select-scroll.lk-cv-block__select-scroll_service.js-custom-select-options button");
 
-    private By contactLink1 = By.cssSelector("input[name=contact-0-value]");
-    private By contactLink2 = By.cssSelector("input[name=contact-1-value]");
+    private By contactLink = By.cssSelector("input[name^=contact][name$=value]");
     private By addContactButton = By.cssSelector("button.lk-cv-block__action.lk-cv-block__action_md-no-spacing.js-formset-add.js-lk-cv-custom-select-add");
 
-    public PersonalAreaPage(WebDriver wd, WebDriverWait wait) {
-        super(wd, wait);
+    public PersonalAreaPage(WebDriver wd) {
+        super(wd);
     }
 
-    public String pageUrl(){
+    public String pageUrl() {
         return wd.getCurrentUrl();
     }
 
-    public PersonalAreaPage pressAbout(){
-        click(about);
+    public PersonalAreaPage pressAbout() {
+        //click(about);
+        wd.get("https://otus.ru/lk/biography/personal/");
         return this;
     }
 
-    public void fillPersonalData(Person me) throws IOException {
+    public void fillPersonalData(Person me) {
         setText(fname, me.getFirstName());
         setText(lname, me.getLastName());
         setText(fnameLatin, me.getFirstNameEn());
         setText(lnameLatin, me.getLastNameEn());
         setText(blogName, me.getNameInBlog());
         setText(birthDate, me.getBirthDate());
+        ((JavascriptExecutor)wd).executeScript("window.scrollBy(0,200);");
         // Setting country
         setCountry(me.getCountry());
 
@@ -61,35 +64,35 @@ public class PersonalAreaPage extends BasePage {
         setCity(me.getCity());
 
         // Setting contacts
-        setContacts(me);
+        for (int i = 0; i < me.getContacts().size(); i++) {
+            Contact contact = me.getContacts().get(i);
+            setContacts(contact.getSocialName(), contact.getSocialLink(), i);
+            addContact();
+
+        }
+
+//        setContacts("Facebook", me., 0);
+//        setContacts("VK", me.getVk(), 1);
         click(submit);
     }
 
-    private void setContacts(Person me) {
+    private void setContacts(String socialName, String socialLink, int index) {
 
-        wd.findElement(contacts).click();
+        wd.findElements(contacts).get(index).click();
         List<WebElement> socialList = wd.findElements(contactButtons);
 
         for (WebElement social : socialList) {
-            if (social.getText().equals("Facebook")) {
+            if (social.getText().equals(socialName)) {
                 social.click();
-                setText(contactLink1, me.getFb());
+                WebElement input = wd.findElements(contactLink).get(index);
+                setText(input, socialLink);
                 break;
             }
         }
+    }
 
+    private void addContact() {
         wd.findElement(addContactButton).click();
-
-        wd.findElements(contacts).get(1).click();
-        List<WebElement> contacts = wd.findElements(contactButtons);
-
-        for (WebElement con : contacts) {
-            if (con.getText().equals("VK")) {
-                con.click();
-                setText(contactLink2, me.getVk());
-                break;
-            }
-        }
     }
 
     private void setCountry(String countryName) {
@@ -98,7 +101,7 @@ public class PersonalAreaPage extends BasePage {
         wd.findElement(country).click();
         List<WebElement> countries = wd.findElements(countryButtons);
         assert countries.size() > 0;
-        for (WebElement country: countries) {
+        for (WebElement country : countries) {
             if (country.getText().equals(countryName)) {
                 country.click();
                 break;
@@ -118,7 +121,7 @@ public class PersonalAreaPage extends BasePage {
         }
     }
 
-    public Person getPersonFromSite(){
+    public Person getPersonFromSite() {
         logger.info("get person info from site");
         Person p = new Person();
         p.setFirstName(getValue(fname));
@@ -129,8 +132,15 @@ public class PersonalAreaPage extends BasePage {
         p.setBirthDate(getValue(birthDate));
         p.setCountry(getTextContent(getCountry).trim());
         p.setCity(getTextContent(getCity).trim());
-        p.setFb(getValue(contactLink1));
-        p.setVk(getValue(contactLink2));
+
+        List<WebElement> contactList = wd.findElements(contacts);
+        for (int i = 0; i < contactList.size(); i++){
+            WebElement we = contactList.get(i);
+            String socialName = we.getText().trim();
+            String socialLink = getValue(wd.findElements(contactLink).get(i));
+            p.addContact(new Contact(socialName, socialLink));
+        }
+
         logger.info(p.toString());
         return p;
     }
@@ -139,8 +149,14 @@ public class PersonalAreaPage extends BasePage {
         return wd.findElement(locator).getAttribute("value");
     }
 
-    private String getTextContent(By locator) {
-        return wd.findElement(locator).getAttribute("textContent");
+    private String getValue(WebElement we) {
+        return we.getAttribute("value").trim();
     }
+
+    private String getTextContent(By locator) {
+        return wd.findElement(locator).getAttribute("textContent").trim() ;
+    }
+
+
 
 }

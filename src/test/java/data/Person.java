@@ -1,5 +1,7 @@
 package data;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class Person {
@@ -13,23 +15,14 @@ public class Person {
     private String country;
     private String email;
     private String phone;
-    private String fb;
-    private String vk;
+    private List<Contact> contacts = new ArrayList<>();
 
-    public String getFb() {
-        return fb;
+    public void addContact(Contact contact) {
+        contacts.add(contact);
     }
 
-    public void setFb(String fb) {
-        this.fb = fb;
-    }
-
-    public String getVk() {
-        return vk;
-    }
-
-    public void setVk(String vk) {
-        this.vk = vk;
+    public List<Contact> getContacts() {
+        return contacts;
     }
 
     public void setFirstName(String firstName) {
@@ -125,13 +118,12 @@ public class Person {
                 birthDate.equals(person.birthDate) &&
                 city.equals(person.city) &&
                 country.equals(person.country) &&
-                fb.equals(person.fb) &&
-                vk.equals(person.vk);
+                contacts.equals(person.contacts);
     }
 
     @Override
     public String toString() {
-        return "data.Person{" +
+        return  "data.Person{" +
                 "firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", firstNameEn='" + firstNameEn + '\'' +
@@ -140,13 +132,11 @@ public class Person {
                 ", birthDate='" + birthDate + '\'' +
                 ", city='" + city + '\'' +
                 ", country='" + country + '\'' +
-                ", fb='" + fb + '\'' +
-                ", vk='" + vk + '\'' +
-                '}';
+                ", contacts:'" + contacts;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(firstName, lastName, firstNameEn, lastNameEn, nameInBlog, birthDate, city, country, fb, vk);
+        return Objects.hash(firstName, lastName, firstNameEn, lastNameEn, nameInBlog, birthDate, city, country, contacts);
     }
 }

@@ -7,13 +7,13 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import static java.lang.Thread.sleep;
 
 
-public class MainPageWithAuth extends BasePage {
+public class AuthElem extends BasePage {
     private By personalAreaButton = By.cssSelector("div.header2__right div.header2-menu");
     private By logOut = By.linkText("Выход");
     private By lk = By.linkText("Личный кабинет");
 
-    public MainPageWithAuth(WebDriver wd, WebDriverWait wait) {
-        super(wd, wait);
+    public AuthElem(WebDriver wd) {
+        super(wd);
     }
 
 
@@ -22,7 +22,7 @@ public class MainPageWithAuth extends BasePage {
         click(personalAreaButton);
         click(lk);
         logger.info("personal area");
-        return new PersonalAreaPage(wd, wait);
+        return new PersonalAreaPage(wd);
     }
 
     public void logOut() {

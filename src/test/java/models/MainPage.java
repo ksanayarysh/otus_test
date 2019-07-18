@@ -5,11 +5,12 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 
-public class MainPageWithoutAuth extends BasePage {
+public class MainPage extends BasePage {
     private By loginButton = By.cssSelector("button.header2__auth");
+    private AuthElem authElem;
 
-    public MainPageWithoutAuth(WebDriver wd, WebDriverWait wait) {
-        super(wd, wait);
+    public MainPage(WebDriver wd) {
+        super(wd);
         wd.get("http://www.otus.ru/");
         logger.info("main page");
     }
@@ -17,7 +18,14 @@ public class MainPageWithoutAuth extends BasePage {
     public RegPage pressLoginButton() {
         click(loginButton);
         logger.info("login button");
-        return new RegPage(wd, wait);
+        return new RegPage(wd);
     }
 
+    public AuthElem getAuthElem() {
+        return authElem;
+    }
+
+    public void activatePanel(){
+        authElem = new AuthElem(wd);
+    }
 }

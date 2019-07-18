@@ -10,13 +10,11 @@ import org.slf4j.LoggerFactory;
 
 public class BasePage {
     protected WebDriver wd;
-    protected WebDriverWait wait;
     protected static final Logger logger = LoggerFactory.getLogger(BasePage.class);
 
 
-    public BasePage(WebDriver wd, WebDriverWait wait) {
+    public BasePage(WebDriver wd) {
         this.wd = wd;
-        this.wait = wait;
     }
 
     public void click(By locator) {
@@ -26,7 +24,18 @@ public class BasePage {
     }
 
     public void setText(By locator, String text) {
-        WebElement we = wait.until(ExpectedConditions.elementToBeClickable(locator));
+//        WebDriverWait wait = new WebDriverWait(wd, 10);
+//        WebElement we = wait.until(ExpectedConditions.elementToBeClickable(locator));
+        WebElement we = wd.findElement(locator);
+        we.clear();
+        we.sendKeys(text);
+        we.click();
+
+    }
+
+    public void setText(WebElement we, String text) {
+//        WebDriverWait wait = new WebDriverWait(wd, 10);
+//        WebElement we = wait.until(ExpectedConditions.elementToBeClickable(locator));
         we.clear();
         we.sendKeys(text);
         we.click();
