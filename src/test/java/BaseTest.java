@@ -24,8 +24,6 @@ public class BaseTest {
         driver.manage().window().maximize();
         user = System.getProperty("user");
         password = System.getProperty("password");
-        user="ksana32@gmail.com";
-        password="kdUJRAz5C2R7j7g";
     }
 
     @After
